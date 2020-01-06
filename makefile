@@ -1,7 +1,7 @@
 JAVA = java
 JAVAC = javac
 
-all: clean compile run
+all: compile run
 
 clean:
 	rm -rf bin;

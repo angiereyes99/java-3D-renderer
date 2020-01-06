@@ -18,15 +18,9 @@ public class Screen extends BitMap {
 		perspectiveVision = new BitMap3D(width, height);
 	}
 
-	int t;
-
-	public void render() {
-		t++;
-		int ox = (int) (Math.sin(t / 1000.0) * width/2);
-		int oy = (int) (Math.cos(t / 1000.0) * height/2);
-
+	public void render(Game game) {
 		//clear();
-		perspectiveVision.render();
+		perspectiveVision.render(game);
 		perspectiveVision.renderFog();
 		render(perspectiveVision, 0, 0);
 	}

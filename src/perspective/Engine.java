@@ -14,25 +14,32 @@ public class Engine extends Canvas implements Runnable {
 	public static final int SCALE = 1;
 	public static final double FRAME_LIMIT = 60.0;
 	public static final String TITLE = "java-perspectives";
-	public static final BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-	public static final int[] pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 	public static JFrame j;
 
+	public final BufferedImage image;
+	public final int[] pixels;
+
+	private Game game;
 	private Screen screen;
+	private InputHandler inputHandler;
 
 	public Engine() {
-		screen = new Screen(WIDTH, HEIGHT);
+		Dimension dimension = new Dimension(WIDTH * SCALE, HEIGHT * SCALE);
+		setMinimumSize(dimension);
+		setMaximumSize(dimension);
+		setPreferredSize(dimension);
 
+		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
+		inputHandler = new InputHandler();
+
+		addKeyListener(inputHandler);
 	}
 
 	public static void main(String[] args) {
 		j = new JFrame();
 		j.setResizable(false);
 		Engine engine = new Engine();
-		Dimension dimension = new Dimension(WIDTH * SCALE, HEIGHT * SCALE);
-		engine.setMinimumSize(dimension);
-		engine.setMaximumSize(dimension);
-		engine.setPreferredSize(dimension);
 		j.add(engine);
 		j.pack();
 		j.setTitle(TITLE);
@@ -80,7 +87,13 @@ public class Engine extends Canvas implements Runnable {
 		if (isRunning) return;
 
 		isRunning = true;
+		init();
 		new Thread(this).start();
+	}
+
+	public void init() {
+		game = new Game();
+		screen = new Screen(WIDTH, HEIGHT);
 	}
 
 	public void render() {
@@ -94,7 +107,7 @@ public class Engine extends Canvas implements Runnable {
 		for (int i=0; i < pixels.length; i++) 
 			pixels[i] = 0;
 
-		screen.render();
+		screen.render(game);
 		for (int i=0; i < pixels.length; i++) {
 			pixels[i] = screen.pixels[i];
 		}
@@ -105,6 +118,7 @@ public class Engine extends Canvas implements Runnable {
 	}
 
 	public void update() {
+		game.update();
 		screen.update();
 	}
 
