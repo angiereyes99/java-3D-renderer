@@ -27,10 +27,11 @@ public class BitMap3D extends BitMap {
 
 	public void render(Game game) {
 		t++;
-		// rot = t / 100.0;
-		// xCam = game.time % 100.0 / 50;
-		// yCam = game.time % 100.0 / 50;
-		// zCam = Math.sin(game.time / 10.0) * 2;
+		rot = Math.sin(game.time / 40.0) * 0.5;
+		rot = game.player.rot;
+		xCam = game.player.x;
+		yCam = game.player.y;
+		zCam = 0;
 		rSin = Math.sin(rot);
 		rCos = Math.cos(rot);
 

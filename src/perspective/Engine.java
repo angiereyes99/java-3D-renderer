@@ -34,6 +34,10 @@ public class Engine extends Canvas implements Runnable {
 		inputHandler = new InputHandler();
 
 		addKeyListener(inputHandler);
+		addMouseListener(inputHandler);
+		addFocusListener(inputHandler);
+		addMouseMotionListener(inputHandler);
+		addMouseWheelListener(inputHandler);
 	}
 
 	public static void main(String[] args) {
@@ -118,7 +122,7 @@ public class Engine extends Canvas implements Runnable {
 	}
 
 	public void update() {
-		game.update();
+		game.update(inputHandler.keys);
 		screen.update();
 	}
 
