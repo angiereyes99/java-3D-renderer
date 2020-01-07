@@ -56,28 +56,56 @@ public class BitMap3D extends BitMap {
 				depthBuffer[x + y * width] = zd;
 				// pixels[x + y * width] = Textures.floor.pixels[(xPix & 8) | (yPix & 8) * Textures.floor.width];
 				pixels[x + y * width] = ((yPix & 15) * 16) << 8 | ((xPix & 15) *16);
-				// if ((xPix & 15) == 0) {
-				// 	pixels[x + y * width] = 0xff00ff;
-				// }
 			}
 		}
-		//renderWall();
+		renderWall(0,2,1,2);
 	}
 
-	public void renderWall() {
-		Random r = new Random(100);
-		for (int i=0; i < 100000; i++) {
-			double x = r.nextDouble() * 2 - 1;
-			double y = r.nextDouble() * 2 - 1;
-			double z = 4;
-		
+	public void renderWall(double x0, double y0, double x1, double y1) {
+		double xo0 = x0 - 0.5 - xCam * 2;
+		double u0 = -0.5 + zCam / 4;
+		double d0 = +0.5 + zCam / 4;
+		double zo0 = y0 - yCam * 2;
 
-			int xPixel = (int) (x / z * fov + width / 2.0);
-			int yPixel = (int) (y / z * fov + height / 2.0);
+		double xx0 = xo0 * rCos + zo0 * rSin;
+		double zz0 = -xo0 * rSin + zo0 * rCos;
 
-			if (xPixel >= 0 && xPixel < width && yPixel >= 0 && yPixel < height) {
-				depthBuffer[xPixel + yPixel * width] = z;
-				pixels[xPixel + yPixel * width] = 0xff00ff;
+		double xo1 = x1 - 0.5 - xCam * 2;
+		double u1 = -0.5 + zCam / 4;
+		double d1 = +0.5 + zCam / 4;
+		double zo1 = y1 - yCam * 2;
+
+		double xx1 = xo1 * rCos + zo1 * rSin;
+		double zz1 = -xo1 * rSin + zo1 * rCos;
+
+		double xPixel0 = xx0 / zz0 * fov + width / 2.0;
+		double xPixel1 = xx1 / zz1 * fov + width / 2.0;
+
+		if (xPixel0 > xPixel1) return;
+
+		int xp0 = (int) Math.round(xPixel0);
+		int xp1 = (int) Math.round(xPixel1);
+		if (xp0 < 0) xp0 = 0;
+		if (xp1 > width) xp1 = width;
+
+		double yPixel00 = (u0 / zz0 * fov + height / 2.0);
+		double yPixel10 = (u1 / zz1 * fov + height / 2.0);
+		double yPixel01 = (d0 / zz0 * fov + height / 2.0);
+		double yPixel11 = (d1 / zz1 * fov + height / 2.0);
+
+		for (int x = xp0; x < xp1; x++) {
+			double yPixel0 = yPixel00 + (x - xPixel0) * (yPixel10 - yPixel00) / (xPixel1 - xPixel0);
+			double yPixel1 = yPixel01 + (x - xPixel0) * (yPixel11 - yPixel01) / (xPixel1 - xPixel0);
+			if (yPixel10 > yPixel11) return;
+
+			int yp0 = (int) yPixel0;
+			int yp1 = (int) yPixel1;
+			if (xp0 < 0) xp0 = 0;
+			if (xp1 > width) xp1 = width;
+
+			for (int y = yp0; y < yp1; y++) {
+				pixels[x + y * width] = 0xff00ff;
+				depthBuffer[x + y * width] = 0;
 			}
 		}
 	}
@@ -90,7 +118,7 @@ public class BitMap3D extends BitMap {
 			int green = (color >> 8) & 0xff;
 			int blue = (color) & 0xff;
 
-			double brightness = 255 - depthBuffer[i] * 3;
+			double brightness = 255 - depthBuffer[i] * 2;
 			red = (int) (red / 255.0 * brightness);
 			green = (int) (green / 255.0 * brightness);
 			blue = (int) (blue / 255.0 * brightness);

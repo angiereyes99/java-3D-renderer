@@ -19,7 +19,7 @@ public class Screen extends BitMap {
 	}
 
 	public void render(Game game) {
-		//clear();
+		clear();
 		perspectiveVision.render(game);
 		perspectiveVision.renderFog();
 		render(perspectiveVision, 0, 0);
