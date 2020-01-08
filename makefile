@@ -8,6 +8,7 @@ clean:
 
 compile:
 	mkdir -p bin;
+	$(JAVAC) src/perspective/tools/*.java -d bin;
 	$(JAVAC) src/perspective/*.java -d bin;
 
 run:

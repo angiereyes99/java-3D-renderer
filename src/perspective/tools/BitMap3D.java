@@ -1,5 +1,7 @@
 package perspective;
 
+import perspective.Game;
+
 import java.util.*;
 
 public class BitMap3D extends BitMap {
@@ -28,9 +30,9 @@ public class BitMap3D extends BitMap {
 	public void render(Game game) {
 		t++;
 		rot = Math.sin(game.time / 40.0) * 0.5;
-		rot = game.player.rot;
-		xCam = game.player.x;
-		yCam = game.player.y;
+		// rot = game.player.rot;
+		// xCam = game.player.x;
+		// yCam = game.player.y;
 		zCam = 0;
 		rSin = Math.sin(rot);
 		rCos = Math.cos(rot);
@@ -78,34 +80,42 @@ public class BitMap3D extends BitMap {
 		double xx1 = xo1 * rCos + zo1 * rSin;
 		double zz1 = -xo1 * rSin + zo1 * rCos;
 
-		double xPixel0 = xx0 / zz0 * fov + width / 2.0;
-		double xPixel1 = xx1 / zz1 * fov + width / 2.0;
+		double xPixel0 = xx0 / zz0 * fov + width / 2.0 + 0.5;
+		double xPixel1 = xx1 / zz1 * fov + width / 2.0 + 0.5;
 
 		if (xPixel0 > xPixel1) return;
 
-		int xp0 = (int) Math.round(xPixel0);
-		int xp1 = (int) Math.round(xPixel1);
+		int xp0 = (int) Math.floor(xPixel0);
+		int xp1 = (int) Math.floor(xPixel1);
 		if (xp0 < 0) xp0 = 0;
 		if (xp1 > width) xp1 = width;
 
-		double yPixel00 = (u0 / zz0 * fov + height / 2.0);
-		double yPixel10 = (u1 / zz1 * fov + height / 2.0);
-		double yPixel01 = (d0 / zz0 * fov + height / 2.0);
-		double yPixel11 = (d1 / zz1 * fov + height / 2.0);
+		double yPixel00 = (u0 / zz0 * fov + height / 2.0) + 0.5;
+		double yPixel10 = (u1 / zz1 * fov + height / 2.0) + 0.5;
+		double yPixel01 = (d0 / zz0 * fov + height / 2.0) + 0.5;
+		double yPixel11 = (d1 / zz1 * fov + height / 2.0) + 0.5;
+
+		double iz0 = zz0;
+		double iz1 = zz1;
 
 		for (int x = xp0; x < xp1; x++) {
-			double yPixel0 = yPixel00 + (x - xPixel0) * (yPixel10 - yPixel00) / (xPixel1 - xPixel0);
-			double yPixel1 = yPixel01 + (x - xPixel0) * (yPixel11 - yPixel01) / (xPixel1 - xPixel0);
+			double p = (x - xPixel0) / (xPixel1 - xPixel0);
+
+			double yPixel0 = yPixel00 + (yPixel10 - yPixel00) * p;
+			double yPixel1 = yPixel01 + (yPixel11 - yPixel01) * p;
+
+			double iz = iz0 + (iz1 - iz0) * p;
+
 			if (yPixel10 > yPixel11) return;
 
-			int yp0 = (int) yPixel0;
-			int yp1 = (int) yPixel1;
+			int yp0 = (int) Math.floor(yPixel0);
+			int yp1 = (int) Math.floor(yPixel1);
 			if (xp0 < 0) xp0 = 0;
 			if (xp1 > width) xp1 = width;
 
 			for (int y = yp0; y < yp1; y++) {
 				pixels[x + y * width] = 0xff00ff;
-				depthBuffer[x + y * width] = 0;
+				depthBuffer[x + y * width] = iz * 10;
 			}
 		}
 	}
@@ -118,7 +128,7 @@ public class BitMap3D extends BitMap {
 			int green = (color >> 8) & 0xff;
 			int blue = (color) & 0xff;
 
-			double brightness = 255 - depthBuffer[i] * 2;
+			double brightness = 255 - depthBuffer[i] * 5;
 			red = (int) (red / 255.0 * brightness);
 			green = (int) (green / 255.0 * brightness);
 			blue = (int) (blue / 255.0 * brightness);

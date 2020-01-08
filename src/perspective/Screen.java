@@ -1,5 +1,7 @@
 package perspective;
 
+import perspective.tools.*; 
+
 import java.util.*;
 
 public class Screen extends BitMap {

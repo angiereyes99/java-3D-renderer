@@ -1,5 +1,7 @@
 package perspective;
 
+import perspective.tools.*; 
+
 import static java.awt.event.KeyEvent.*;
 
 public class Game {
