@@ -1,7 +1,5 @@
 package perspective;
 
-import perspective.*;
-
 public class Player {
 
     public double x, y, rot;

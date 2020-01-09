@@ -1,7 +1,5 @@
 package perspective;
 
-import perspective.*;
-
 import java.awt.event.*;
 
 public class InputHandler implements KeyListener, MouseListener, FocusListener, MouseMotionListener, MouseWheelListener {

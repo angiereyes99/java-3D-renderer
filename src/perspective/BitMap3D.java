@@ -1,7 +1,5 @@
 package perspective;
 
-import perspective.Game;
-
 import java.util.*;
 
 public class BitMap3D extends BitMap {

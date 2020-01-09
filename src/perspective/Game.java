@@ -1,6 +1,4 @@
-package perspective;
-
-import perspective.tools.*; 
+package perspective; 
 
 import static java.awt.event.KeyEvent.*;
 

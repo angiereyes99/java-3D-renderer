@@ -1,7 +1,5 @@
 package perspective;
 
-import perspective.*;
-
 public class BitMap {
 
 	public int width;

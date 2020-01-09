@@ -1,7 +1,5 @@
 package perspective;
 
-import perspective.tools.*; 
-
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.JFrame;
